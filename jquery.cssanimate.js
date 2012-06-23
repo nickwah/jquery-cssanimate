@@ -57,9 +57,9 @@
             options = {duration: options, easing: opt_easing, complete: opt_complete};
         } else {
             options = options || {};
-            options.duration = options.duration || 800;
-            options.easing = options.easing || 'linear';
         }
+        options.duration = options.duration || 800;
+        options.easing = options.easing || 'linear';
         var duration_secs = ' ' + (options.duration / 1000) + 's ' + options.easing;
         var $obj = this;
         var css_params = {};
