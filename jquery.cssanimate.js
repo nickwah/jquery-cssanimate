@@ -88,7 +88,7 @@
                 var elapsed = n - start_time, lag = n - last_time;
                 if (options.step && lag > 50) {
                     last_time = n;
-                    options.step(elapsed / options.duration);
+                    options.step.apply($obj[0], [elapsed / options.duration]);
                 }
                 if (elapsed < options.duration) {
                     setTimeout(step_func, 5);
@@ -108,7 +108,7 @@
                 transition_css[transition_param] = 'none'; // TODO preserve initial value
                 $obj.css(transition_css);
                 $obj.data('css_animated', null);
-                if (options.complete) options.complete();
+                if (options.complete) options.complete.apply($obj[0]);
                 $obj[0].removeEventListener(transition_end, complete, true);
                 $obj = null;
                 transition_css = null;
