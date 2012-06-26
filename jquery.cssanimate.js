@@ -1,5 +1,7 @@
 /*! Copyright (c) 2012 Nicholas White (http://www.nickandjerry.com/)
- * Licensed under the MIT License (LICENSE.txt).
+ * Licensed under the MIT License (see LICENSE). If the LICENSE was not
+ * included along with this source code, it can be obtained via:
+ * http://www.opensource.org/licenses/mit-license.php
  *
  * Version: 1.0.0
  *
@@ -11,7 +13,7 @@
     // Cache the map from CSS3 to vendor-prefixed version for this browser.
     var SUPPORTED_PROP_MAP = {};
     function supported_style(prop) {
-        // This function is from:
+        // This function is derived from:
         // http://api.jquery.com/jQuery.cssHooks/
 
         if (SUPPORTED_PROP_MAP[prop]) return SUPPORTED_PROP_MAP[prop];
@@ -46,10 +48,14 @@
 
     /*
      * Can be used roughly like $.fn.animate(params, options).
+     *
+     * NB: I generally only use it on one dom element.  While it should work
+     * when run on multiple, I'm not sure what the expected behavior of
+     * step and complete callbacks will be.
      */
     jQuery.fn.cssAnimate = function(params, options, opt_easing, opt_complete) {
         var transition_param = supported_style('transition');
-        if (!transition_param) return this.animate(params, options);
+        if (!transition_param) return this.animate(params, options, opt_easing, opt_complete);
 
         this.data('css_animated', 1);
 
@@ -77,8 +83,11 @@
         // We have to apply the transition params with a duration of 0s first otherwise it'll animate from 0
         $obj.css(transition_css);
         window.setTimeout(function() {
+            // After the browser has had a chance to deal with any side-effects
+            // from that transition, we set the real values for the transition.
             transition_css[transition_param] = transition_attributes.join(', ');
             $obj.css(transition_css);
+            // And immediately set the desired CSS for the end of animation.
             $obj.css(css_params);
 
             var start_time = now();
@@ -88,6 +97,8 @@
                 var elapsed = n - start_time, lag = n - last_time;
                 if (options.step && lag > 50) {
                     last_time = n;
+                    // Note: the only value passed into step() is a completion percentage
+                    // This does not match the spec from jquery.animate!!
                     options.step.apply($obj[0], [elapsed / options.duration]);
                 }
                 if (elapsed < options.duration) {
@@ -120,7 +131,7 @@
         return this;
     };
 
-    // We overload :animated to match for both css animated and regular
+    // We overload :animated to match for both css-animated and regular
     // jQuery animated elements.
 
     jQuery.expr.filters.animated = function( elem ) {

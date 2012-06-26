@@ -1,1 +1,18 @@
 A jQuery extension to use CSS transitions for animation instead of javascript, if available.
+
+Usage:
+
+You can pass in duration, easing, and callback directly:
+
+$('#fancy_div').cssAnimate({height: '200px'}, 800, 'linear', callback);
+
+Or, pass it in as an options object:
+
+$('#fancy_div').cssAnimate({font-size: '18px'}, {
+    duration: 800,
+    easing: 'linear', // or 'ease'
+    step: function(progress) { }, // slightly different from jquery's step
+    complete: function() { }
+});
+
+Copyright (c) 2012 Nicholas White.  Licensed under the MIT license (see: LICENSE); if a copy of the license was not supplied along with the source code, one can be obtained via: http://www.opensource.org/licenses/mit-license.php
