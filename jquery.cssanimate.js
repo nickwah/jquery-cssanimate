@@ -121,17 +121,25 @@
                 $obj.data('css_animated', null);
                 if (options.complete) options.complete.apply($obj[0]);
                 $obj[0].removeEventListener(transition_end, complete, true);
+                $obj.unbind('stop_css_anim');
                 $obj = null;
                 transition_css = null;
                 step_func = null;
                 complete = null;
             }
             $obj[0].addEventListener(transition_end, complete, true);
+
+            $obj.bind('stop_css_anim', function() {
+                // Note that stopping will actually set the css to the final
+                // state, rather than stopping at the current css state.
+                transition_css[transition_param] = transition_attributes_initial.join(', ');
+                $obj.css(transition_css);
+            });
         }, 1);
         return this;
     };
 
-    // We overload :animated to match for both css-animated and regular
+    // We overload :animated to match for both css animated and regular
     // jQuery animated elements.
 
     jQuery.expr.filters.animated = function( elem ) {
@@ -139,6 +147,18 @@
         return jQuery.grep(jQuery.timers, function( fn ) {
             return elem === fn.elem;
         }).length;
+    };
+
+    // Overload jQuery.fn.stop to stop css animations as well as jquery ones.
+
+    var orig_stop = jQuery.fn.stop;
+    jQuery.fn.stop = function() {
+        if (this.data('css_animated')) {
+            this.trigger('stop_css_anim');
+        }
+        var args = Array.prototype.slice.apply(arguments);
+        orig_stop.apply(this, args);
+        return this;
     };
 
 })(jQuery);
