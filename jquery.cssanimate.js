@@ -59,12 +59,19 @@
 
         this.data('css_animated', 1);
 
-        if (options && (typeof options) != 'object') {
+        if (options !== undefined && (typeof options) != 'object') {
             options = {duration: options, easing: opt_easing, complete: opt_complete};
         } else {
             options = options || {};
         }
-        options.duration = options.duration || 800;
+        options.duration = options.duration !== undefined ? options.duration : 400;
+        if (options.duration === 0) {
+            // Special case for 0
+            this.css(params);
+            if (options.complete) options.complete.apply(this[0]);
+            return;
+        }
+
         options.easing = options.easing || 'linear';
         var duration_secs = ' ' + (options.duration / 1000) + 's ' + options.easing;
         var $obj = this;
