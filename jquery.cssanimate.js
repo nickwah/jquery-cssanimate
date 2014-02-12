@@ -68,8 +68,9 @@
         if (options.duration === 0) {
             // Special case for 0
             this.css(params);
+            this.data('css_animated', null);
             if (options.complete) options.complete.apply(this[0]);
-            return;
+            return this;
         }
 
         options.easing = options.easing || 'linear';
