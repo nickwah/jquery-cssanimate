@@ -98,10 +98,16 @@
             // And immediately set the desired CSS for the end of animation.
             $obj.css(css_params);
 
-            var start_time = now();
-            var last_time = now();
+            // support for older Browsers
+            if (!Date.now()) {
+                Date.now = function () {
+                    return new Date().valueOf();
+                }
+            }
+            var start_time = Date.now();
+            var last_time = Date.now();
             function step_func() {
-                var n = now();
+                var n = Date.now();
                 var elapsed = n - start_time, lag = n - last_time;
                 if (options.step && lag > 50) {
                     last_time = n;
